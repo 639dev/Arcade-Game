@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css?family=Montserrat:300');
 
 body {
-    text-align: center;
+  text-align: center;
 }
 
 #level {
@@ -17,4 +17,11 @@ body {
 button img:hover {
   cursor: pointer;
   opacity: 0.3;
+}
+
+#choose-image-button {
+  margin-bottom: 10px;
+  background-color: #4CAF50;
+  border: 1px solid grey;
+  padding: 5px;
 }

@@ -9,3 +9,12 @@ body {
   margin-top: 5px;
   padding-top: 30px;
 }
+
+#char-list {
+  display: none;
+}
+
+button img:hover {
+  cursor: pointer;
+  opacity: 0.3;
+}

@@ -1,26 +1,42 @@
+var level = 1;
+levelUpSound = new sound("audio/level_up.wav");
+loseSound = new sound("audio/lose_sound.wav");
+
 // Enemies our player must avoid
 var Enemy = function() {
     this.sprite = 'images/enemy-bug.png';
-    var myArray = [60,130,220]
+    var myArray = [60,130,220];
     var rand = myArray[Math.floor(Math.random() * myArray.length)];
-    this.x = rand;
+    this.x = -30;
     this.y = rand;
+    this.speed = (Math.floor(Math.random() * 150) + 100);
 };
+
 
 // Parameter: dt, a time delta between ticks
 Enemy.prototype.update = function(dt) {
+    this.x += this.speed*dt;
     if(this.x > 500)
     {
-        this.x = 0;
+        var myArray = [60,130,220];
+        var rand = myArray[Math.floor(Math.random() * myArray.length)];
+        this.y = rand; 
+        this.x =-30;
     }
-    else{
-    this.x += 50*dt;
-    }
+
 };
 
 Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
+
+Enemy.prototype.increaseEnemies = function(level){
+    allEnemies = [];
+    for(var i = 0 ;i<level;i++){
+        allEnemies.push(new Enemy());
+    }
+};
+
 
 var Player = function(){
     this.sprite = 'images/char-boy.png';
@@ -29,16 +45,23 @@ var Player = function(){
 };
 
 Player.prototype.update = function() {
+    player.checkCollision();
+};
+
+Player.prototype.checkCollision = function(){
     for(var i =0;i<allEnemies.length;i++)
     {
-        if (player.x < allEnemies[i].x + 171/4 &&
-            player.x + 171/4 > allEnemies[i].x &&
-            player.y < allEnemies[i].y + 101/5 &&
-            player.y + 101/5 > allEnemies[i].y)
-        {
-            player.x = 200;
-            player.y = 380;
-        }
+        if (player.x < allEnemies[i].x + 171/3 &&
+            player.x + 171/3 > allEnemies[i].x &&
+            player.y < allEnemies[i].y + 101/3 &&
+            player.y + 101/3 > allEnemies[i].y) {
+                loseSound.play();
+                level = 1;
+                $('#level').html('Level '+level);
+                Enemy.prototype.increaseEnemies(level);
+                player.x = 200;
+                player.y = 380;
+            }
     }
 };
 
@@ -54,7 +77,12 @@ Player.prototype.handleInput = function(e){
     else if(e == 'up'){
         if( this.y < 80){
             this.y = this.y;
-            console.log("ooops");
+            level++;
+            $('#level').html('Level '+level);
+            player.x = 200;
+            player.y = 380;
+            levelUpSound.play();
+            Enemy.prototype.increaseEnemies(level);
         } 
         else {
             this.y -= 80;
@@ -85,7 +113,7 @@ Player.prototype.render = function() {
 };
 
 
-var allEnemies = [new Enemy(),new Enemy(),new Enemy(),new Enemy()];
+var allEnemies = [new Enemy()];
 var player = new Player();
 
 
@@ -101,3 +129,22 @@ document.addEventListener('keyup', function(e) {
 
     player.handleInput(allowedKeys[e.keyCode]);
 });
+
+
+
+
+//w3school
+function sound(src) {
+    this.sound = document.createElement("audio");
+    this.sound.src = src;
+    this.sound.setAttribute("preload", "auto");
+    this.sound.setAttribute("controls", "none");
+    this.sound.style.display = "none";
+    document.body.appendChild(this.sound);
+    this.play = function(){
+        this.sound.play();
+    }
+    this.stop = function(){
+        this.sound.pause();
+    }
+}
